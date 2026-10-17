@@ -6,3 +6,5 @@ mlruns/
 .pytest_cache/
 .DS_Store
 MLOps Assignment 1 Instructions.pdf
+mlflow.db
+grid_results.csv
