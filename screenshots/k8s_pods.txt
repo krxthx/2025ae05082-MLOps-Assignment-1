@@ -1,0 +1,6 @@
+NAME                         READY   STATUS    RESTARTS   AGE   IP              NODE       NOMINATED NODE   READINESS GATES
+heart-api-7d65f76968-ghgm8   1/1     Running   0          36s   10.244.120.86   minikube   <none>           <none>
+heart-api-7d65f76968-v54g2   1/1     Running   0          36s   10.244.120.87   minikube   <none>           <none>
+NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+heart-api    LoadBalancer   10.101.149.111   <pending>     80:30654/TCP   38s
+kubernetes   ClusterIP      10.96.0.1        <none>        443/TCP        127d

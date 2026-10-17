@@ -1,0 +1,9 @@
+INFO:     Started server process [1]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     192.168.65.1:53654 - "GET /health HTTP/1.1" 200 OK
+2026-10-08 11:12:39,161 INFO heart-api | loaded model from /app/models/heart_pipeline.joblib
+2026-10-08 11:12:39,180 INFO heart-api | predict input={'age': 63.0, 'sex': 1, 'cp': 3, 'trestbps': 145.0, 'chol': 233.0, 'fbs': 1, 'restecg': 0, 'thalach': 150.0, 'exang': 0, 'oldpeak': 2.3, 'slope': 0, 'ca': 0, 'thal': 1} -> pred=1 proba=0.8471
+INFO:     192.168.65.1:30754 - "POST /predict HTTP/1.1" 200 OK
+INFO:     192.168.65.1:64819 - "GET /metrics HTTP/1.1" 200 OK

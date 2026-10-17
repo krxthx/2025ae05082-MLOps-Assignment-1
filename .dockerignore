@@ -1,0 +1,10 @@
+__pycache__
+*.pyc
+mlruns
+.git
+monitoring/
+notebooks/
+screenshots/
+tests/
+data/
+mlflow.db
