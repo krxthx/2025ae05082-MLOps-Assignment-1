@@ -90,5 +90,5 @@ notebooks/eda_training.ipynb  REPORT.md  VIDEO_SCRIPT.md
 
 ## Report and video
 
-`REPORT.md` / `REPORT.pdf` hold the full write-up. Demo video: see the link in REPORT.md §11
-(script in `VIDEO_SCRIPT.md`).
+`REPORT.md` / `REPORT.pdf` hold the full write-up. Demo video: `demo/pipeline_walkthrough.mp4` (silent 2-min walkthrough of the whole pipeline;
+`VIDEO_SCRIPT.md` is the script for a narrated live recording).

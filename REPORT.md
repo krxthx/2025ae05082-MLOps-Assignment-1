@@ -12,7 +12,7 @@ experiment tracking and CI.
 **Stack.** scikit-learn pipelines · MLflow · FastAPI · pytest · flake8 · GitHub Actions · Docker · Kubernetes
 (Minikube) · Prometheus · Grafana.
 
-![End-to-end architecture](screenshots/architecture.png)
+![](screenshots/architecture.png)
 
 *Figure 1 — Architecture. Data is downloaded and cleaned, a single scikit-learn `Pipeline` (preprocessing + classifier)
 is tuned and cross-validated with every run logged to MLflow, and the winning pipeline is serialised and baked into
@@ -65,23 +65,23 @@ serving time. `ca` and `thal` are kept as categorical codes.
 
 **EDA findings** (all figures are produced by `python src/eda.py`):
 
-![Class balance](screenshots/eda_class_balance.png){width=55%}
+![](screenshots/eda_class_balance.png){width=55%}
 
 *Class balance: 165 disease (54.5 %) vs 138 healthy (45.5 %). Mild imbalance, so no resampling; stratified CV is used
 everywhere and recall/precision are reported alongside accuracy.*
 
-![Histograms](screenshots/eda_histograms.png)
+![](screenshots/eda_histograms.png)
 
 *Histograms: `chol` is right-skewed (max 564) and `oldpeak` is zero-inflated, which motivates `StandardScaler` on the
 numeric block rather than raw values.*
 
-![Correlation heatmap](screenshots/eda_correlation.png){width=75%}
+![](screenshots/eda_correlation.png){width=75%}
 
 *Correlation heatmap: `thalach` (max heart rate) is negatively related to age and to the label, while `exang`,
 `oldpeak` and `cp` carry the strongest positive signal. This matches clinical intuition (exercise-induced angina,
 ST depression).*
 
-![Chest-pain type vs target](screenshots/eda_cp_vs_target.png){width=60%}
+![](screenshots/eda_cp_vs_target.png){width=60%}
 
 *Chest-pain type vs target: the Cleveland sample has the lowest disease rate for typical angina (cp = 0) and higher
 rates for the other types, a known quirk of this dataset. One-hot encoding lets the models learn it without hand-coded
@@ -141,16 +141,16 @@ because MLflow ≥ 2.19 retired the flat-file store. Each run records:
 * **Artifacts:** the fitted sklearn pipeline (`MLmodel`, `model.pkl`, `conda.yaml`, `requirements.txt`),
   `grid_results.csv`, an out-of-fold **ROC curve** and a **confusion matrix** (PNG, via `mlflow.log_figure`).
 
-![MLflow experiment runs](screenshots/mlflow_runs.jpg)
+![](screenshots/mlflow_runs.jpg)
 
 *Figure — the `heart-disease` experiment with one run per candidate model.*
 
-![MLflow run comparison](screenshots/mlflow_compare_runs.jpg)
+![](screenshots/mlflow_compare_runs.jpg)
 
 *Figure — side-by-side run comparison: tuned parameters (`best__clf__C` vs `best__clf__max_depth` /
 `best__clf__n_estimators`) and metrics.*
 
-![ROC curve artifact](screenshots/mlflow_roc_artifact.jpg)
+![](screenshots/mlflow_roc_artifact.jpg)
 
 *Figure — logged artifacts of the Logistic Regression run, showing the out-of-fold ROC curve (AUC = 0.91) and the model
 files.*
@@ -186,9 +186,9 @@ pytest → docker build → upload metrics.json + screenshots as artifacts`. Any
 the workflow with the failing step's log (the "must fail on errors and give clear logs" requirement). The `upload-artifact`
 step uses `if: always()`, so evidence is kept even on failure.
 
-![GitHub Actions run](screenshots/github_actions_pass.png)
+![](screenshots/github_actions_pass.jpg)
 
-*Figure — CI run on the repository's `main` branch.*
+*Figure — GitHub Actions run #4 on `main`: install, lint, download, train, tests and docker build all pass (1 m 40 s total).*
 
 **What the first CI runs taught me.** The first two runs on GitHub failed, although everything passed on my laptop.
 This is exactly what CI is for, and each failure was a genuine reproducibility bug:
@@ -268,11 +268,11 @@ this is the argument for immutable image tags (the git SHA) instead of `:latest`
   with the datasource (uid pinned to `prometheus`) and the dashboard auto-provisioned, so no manual setup is needed
   (login `admin` / `admin`; host ports are overridable with `API_PORT`, `PROM_PORT`, `GRAFANA_PORT`).
 
-![Prometheus targets](screenshots/prometheus_targets.jpg){width=80%}
+![](screenshots/prometheus_targets.jpg){width=80%}
 
 *Figure — Prometheus target `heart-api:8000/metrics` is UP.*
 
-![Grafana dashboard](screenshots/grafana_dashboard.jpg)
+![](screenshots/grafana_dashboard.jpg)
 
 *Figure — Grafana "Heart Disease API — Monitoring" after replaying the 303 dataset rows through `/predict`: 303 total
 predictions (176 disease / 127 no-disease), p95 latency ≈ 49 ms, request-rate and latency-percentile time series, label
@@ -308,4 +308,4 @@ for clinical decisions.
 | Screenshots | `screenshots/` |
 | Report | `REPORT.md` / `REPORT.pdf` |
 | Deployed API access | local Minikube: `kubectl port-forward svc/heart-api 8002:80` (§8) |
-| Demo video | VIDEO_LINK_PLACEHOLDER |
+| Demo video (silent walkthrough, 2 min: data → train → MLflow → tests → CI → Docker → Kubernetes → monitoring; assembled from real command output and screenshots) | [`demo/pipeline_walkthrough.mp4`](https://github.com/krxthx/2025ae05082-MLOps-Assignment-1/blob/main/demo/pipeline_walkthrough.mp4) |
