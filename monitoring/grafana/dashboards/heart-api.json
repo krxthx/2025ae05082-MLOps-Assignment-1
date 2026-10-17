@@ -105,7 +105,7 @@
     {
       "id": 5,
       "type": "timeseries",
-      "title": "Prediction Rate (req/min)",
+      "title": "Prediction Rate (req/s)",
       "gridPos": { "x": 0, "y": 4, "w": 12, "h": 8 },
       "fieldConfig": {
         "defaults": {
@@ -209,7 +209,7 @@
       "options": { "reduceOptions": { "calcs": ["lastNotNull"] } },
       "targets": [
         {
-          "expr": "100 * heart_predictions_total{label=\"1\"} / (heart_predictions_total{label=\"0\"} + heart_predictions_total{label=\"1\"})",
+          "expr": "100 * sum(heart_predictions_total{label=\"1\"}) / sum(heart_predictions_total)",
           "legendFormat": "Disease %",
           "refId": "A"
         }

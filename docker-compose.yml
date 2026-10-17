@@ -4,7 +4,7 @@ services:
   heart-api:
     build: .
     ports:
-      - "8000:8000"
+      - "${API_PORT:-8000}:8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
@@ -14,7 +14,7 @@ services:
   prometheus:
     image: prom/prometheus:v2.53.0
     ports:
-      - "9090:9090"
+      - "${PROM_PORT:-9090}:9090"
     volumes:
       - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
     command:
@@ -26,7 +26,7 @@ services:
   grafana:
     image: grafana/grafana:10.4.0
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3000}:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false

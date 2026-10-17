@@ -1,6 +1,17 @@
-NAME                         READY   STATUS    RESTARTS   AGE   IP              NODE       NOMINATED NODE   READINESS GATES
-heart-api-7d65f76968-ghgm8   1/1     Running   0          36s   10.244.120.86   minikube   <none>           <none>
-heart-api-7d65f76968-v54g2   1/1     Running   0          36s   10.244.120.87   minikube   <none>           <none>
-NAME         TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
-heart-api    LoadBalancer   10.101.149.111   <pending>     80:30654/TCP   38s
-kubernetes   ClusterIP      10.96.0.1        <none>        443/TCP        127d
+$ kubectl get pods,svc -o wide
+NAME                             READY   STATUS    RESTARTS   AGE   IP              NODE       NOMINATED NODE   READINESS GATES
+pod/heart-api-7d65f76968-5gqh4   1/1     Running   0          18s   10.244.120.96   minikube   <none>           <none>
+pod/heart-api-7d65f76968-ww2s4   1/1     Running   0          18s   10.244.120.95   minikube   <none>           <none>
+
+NAME                 TYPE           CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE    SELECTOR
+service/heart-api    LoadBalancer   10.102.9.152   <pending>     80:31734/TCP   18s    app=heart-api
+service/kubernetes   ClusterIP      10.96.0.1      <none>        443/TCP        136d   <none>
+
+$ curl /health
+{"status":"ok"}
+$ curl /predict (sample_input.json)
+{"prediction":1,"probability":0.652,"label":"disease"}
+$ kubectl logs deploy/heart-api --tail=2
+Found 2 pods, using pod/heart-api-7d65f76968-ww2s4
+2026-10-17 12:54:14,780 INFO heart-api | predict input={'age': 63.0, 'sex': 1, 'cp': 3, 'trestbps': 145.0, 'chol': 233.0, 'fbs': 1, 'restecg': 0, 'thalach': 150.0, 'exang': 0, 'oldpeak': 2.3, 'slope': 0, 'ca': 0, 'thal': 1} -> pred=1 proba=0.6520
+INFO:     127.0.0.1:54232 - "POST /predict HTTP/1.1" 200 OK

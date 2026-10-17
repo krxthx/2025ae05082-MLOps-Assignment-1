@@ -8,23 +8,28 @@ import time
 from pathlib import Path
 
 import joblib
+import matplotlib
 import mlflow
 import mlflow.sklearn
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.model_selection import StratifiedKFold, cross_validate
-from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, roc_auc_score
+from sklearn.metrics import ConfusionMatrixDisplay, RocCurveDisplay
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_predict, cross_validate
+from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))  # noqa: E402
 from preprocessing import TARGET, build_pipeline  # noqa: E402
 
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+
 SCORING = {
     "accuracy": make_scorer(accuracy_score),
     "precision": make_scorer(precision_score, zero_division=0),
     "recall": make_scorer(recall_score, zero_division=0),
-    "roc_auc": make_scorer(roc_auc_score),
+    "roc_auc": "roc_auc",  # from predict_proba (not hard labels)
 }
 
 CANDIDATES = {
@@ -34,9 +39,37 @@ CANDIDATES = {
     ),
 }
 
+# Hyper-parameter grids searched with the same stratified 5-fold CV (scored on ROC-AUC).
+GRIDS = {
+    "logistic_regression": {"clf__C": [0.01, 0.1, 1.0, 10.0]},
+    "random_forest": {"clf__n_estimators": [100, 200, 400], "clf__max_depth": [None, 4, 8]},
+}
+CV = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+
+def tune(name, pipe, X, y):
+    gs = GridSearchCV(pipe, GRIDS[name], scoring="roc_auc", cv=CV, n_jobs=-1)
+    gs.fit(X, y)
+    return gs.best_params_, float(gs.best_score_), gs.cv_results_
+
+
+def log_plots(name, pipe, X, y):
+    """Log out-of-fold ROC curve and confusion matrix as MLflow figures."""
+    proba = cross_val_predict(pipe, X, y, cv=CV, method="predict_proba")[:, 1]
+    fig, ax = plt.subplots(figsize=(5, 4))
+    RocCurveDisplay.from_predictions(y, proba, ax=ax, name=name)
+    ax.set_title(f"{name}: out-of-fold ROC")
+    mlflow.log_figure(fig, "roc_curve.png")
+    plt.close(fig)
+    fig, ax = plt.subplots(figsize=(4, 4))
+    ConfusionMatrixDisplay.from_predictions(y, (proba >= 0.5).astype(int), ax=ax, colorbar=False)
+    ax.set_title(f"{name}: confusion matrix (CV)")
+    mlflow.log_figure(fig, "confusion_matrix.png")
+    plt.close(fig)
+
 
 def evaluate(pipe, X, y):
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv = CV
     res = cross_validate(pipe, X, y, cv=cv, scoring=SCORING, n_jobs=-1)
     return {k.replace("test_", ""): float(res[k].mean()) for k in res if k.startswith("test_")}
 
@@ -55,8 +88,17 @@ def main(data="data/heart.csv", out="models/heart_pipeline.joblib"):
         pipe = build_pipeline(clf)
         t0 = time.time()
         with mlflow.start_run(run_name=name):
+            best_params, tuned_auc, cvr = tune(name, pipe, X, y)
+            pipe.set_params(**best_params)
+            print(f"[train] {name} tuned: {best_params} cv_roc_auc={tuned_auc:.4f}")
             mlflow.log_params({f"{name}__{k}": v for k, v in clf.get_params().items()})
+            mlflow.log_params({f"best__{k}": v for k, v in best_params.items()})
+            mlflow.log_metric("grid_best_roc_auc", tuned_auc)
+            pd.DataFrame(cvr)[["params", "mean_test_score", "rank_test_score"]].to_csv("grid_results.csv", index=False)
+            mlflow.log_artifact("grid_results.csv")
+            Path("grid_results.csv").unlink()
             metrics = evaluate(pipe, X, y)
+            log_plots(name, pipe, X, y)
             metrics["fit_seconds"] = time.time() - t0
             mlflow.log_metrics(metrics)
             pipe.fit(X, y)  # refit on full data for packaging
