@@ -85,7 +85,7 @@ src/ data_download.py, eda.py, preprocessing.py, train.py, app.py, inference.py
 tests/test_all.py (7 tests)  .github/workflows/ci.yml  Dockerfile
 k8s/deployment.yaml, k8s/service.yaml  monitoring/prometheus.yml
 data/heart.csv, data/sample_input.json  models/  screenshots/  mlflow.db
-notebooks/eda_training.ipynb  REPORT.md  VIDEO_SCRIPT.md
+notebooks/eda_training.ipynb  REPORT.md
 ```
 
 ## Report and video
@@ -93,5 +93,4 @@ notebooks/eda_training.ipynb  REPORT.md  VIDEO_SCRIPT.md
 `REPORT.md` / `REPORT.pdf` hold the full write-up. Demo video: [narrated live walkthrough](demo/pipeline_walkthrough_narrated.mp4)
 (5 min 34 sec, 1080p: real commands, MLflow, Swagger prediction, CI, Kubernetes,
 and monitoring; synthetic voice-over, captions, and chapters).
-`VIDEO_SCRIPT.md` contains the narration and screen cues; `demo/recording/README.md`
-documents the capture.
+English captions are also available in [SRT format](demo/pipeline_walkthrough_narrated.srt).
