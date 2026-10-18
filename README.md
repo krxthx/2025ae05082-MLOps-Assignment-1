@@ -90,5 +90,8 @@ notebooks/eda_training.ipynb  REPORT.md  VIDEO_SCRIPT.md
 
 ## Report and video
 
-`REPORT.md` / `REPORT.pdf` hold the full write-up. Demo video: `demo/pipeline_walkthrough.mp4` (silent 2-min walkthrough of the whole pipeline;
-`VIDEO_SCRIPT.md` is the script for a narrated live recording).
+`REPORT.md` / `REPORT.pdf` hold the full write-up. Demo video: [narrated live walkthrough](demo/pipeline_walkthrough_narrated.mp4)
+(5 min 34 sec, 1080p: real commands, MLflow, Swagger prediction, CI, Kubernetes,
+and monitoring; synthetic voice-over, captions, and chapters).
+`VIDEO_SCRIPT.md` contains the narration and screen cues; `demo/recording/README.md`
+documents the capture.

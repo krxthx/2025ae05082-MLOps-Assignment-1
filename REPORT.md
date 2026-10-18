@@ -308,4 +308,4 @@ for clinical decisions.
 | Screenshots | `screenshots/` |
 | Report | `REPORT.md` / `REPORT.pdf` |
 | Deployed API access | local Minikube: `kubectl port-forward svc/heart-api 8002:80` (§8) |
-| Demo video (silent walkthrough, 2 min: data → train → MLflow → tests → CI → Docker → Kubernetes → monitoring; assembled from real command output and screenshots) | [`demo/pipeline_walkthrough.mp4`](https://github.com/krxthx/2025ae05082-MLOps-Assignment-1/blob/main/demo/pipeline_walkthrough.mp4) |
+| Demo video (5 min 34 sec, 1080p live browser recording: real command execution, MLflow, tests, CI, Docker prediction through Swagger, Kubernetes, and monitoring; synthetic narration, captions, and chapters) | [Narrated pipeline walkthrough](demo/pipeline_walkthrough_narrated.mp4) |
