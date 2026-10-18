@@ -36,3 +36,9 @@ The recording used these host ports to avoid existing services:
 The Docker API and Kubernetes API return the same sample prediction. Monitoring traffic goes to the Compose API. GitHub Actions footage shows a previously completed real workflow run; it does not represent a new push or deployment during recording.
 
 To capture again, prepare those services and the browser login state, run `prepare_audio.py`, start `console_server.py`, then run `record_walkthrough.py` with `PLAYWRIGHT_BROWSERS_PATH=/private/tmp/assignment-pw-browsers`. Individual scene numbers can be passed to retake only those scenes. Before retaking the Docker scene, remove only the `heart-video` container created for this recording, or change that scene's container name. Finally run `assemble_walkthrough.py`.
+
+## October 18 refresh
+
+Repository, commit, CI, and MLflow views were recaptured after the author corrected the GitHub history. The CI footage uses successful run #7 at commit `5c2a38f`. MLflow is recorded with its assistant panel closed through the normal interface. The other five pipeline sections retain the verified October 17 footage and narration.
+
+The final export remains `../pipeline_walkthrough_narrated.mp4`; no silent alternative is included. `refresh_walkthrough.py` rebuilds the export from retained segments and the four new takes, preserving the existing narration, captions, and chapter timing. Its inputs are the temporary previous export, original timeline, scene audio, retained segments, and new browser recordings under `/private/tmp/assignment-recording`. Browser navigation waits are compressed where needed to preserve narration timing.

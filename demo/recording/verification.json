@@ -1,7 +1,7 @@
 {
   "video": "demo/pipeline_walkthrough_narrated.mp4",
-  "bytes": 15740019,
-  "sha256": "a412976857a8918b520a93e0ec980da2826bba825596f97c82165c133bb7b8a3",
+  "bytes": 15878639,
+  "sha256": "68089f2d032f2d55d72b86bee0d7f8d8d83d16d88e035ad0915cde0f6084bc73",
   "full_video_audio_decode": "passed",
   "narration": "synthetic macOS Samantha",
   "width": 1920,
@@ -38,5 +38,23 @@
       "model_artifact_skipped": false
     }
   ],
-  "report_pages": 10
+  "report_pages": 10,
+  "duration_seconds": 333.62,
+  "reshoot_date": "2026-10-18",
+  "reshoot_scenes": [
+    1,
+    4,
+    5,
+    9
+  ],
+  "retained_pipeline_footage_date": "2026-10-17",
+  "github_ci_run": 39149248605,
+  "github_ci_commit": "5c2a38f952a2b460eb3a78bb8f2476f58ed2f82d",
+  "page_text_checks": "passed",
+  "ocr": {
+    "sample_interval_seconds": 2,
+    "frames_scanned": 167,
+    "matches": []
+  },
+  "single_demo_mp4": true
 }

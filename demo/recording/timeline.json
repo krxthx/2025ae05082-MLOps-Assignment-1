@@ -5,7 +5,10 @@
     "speech": "This assignment builds an end-to-end MLOps pipeline for predicting the presence of heart disease from thirteen patient features. I use the UCI Heart Disease dataset, compare two classifiers, track experiments with MLflow, and serve the selected model through FastAPI. I will show the path from data and training to automated checks, Docker, Kubernetes, and monitoring.",
     "duration": 24.261043083900226,
     "video_start_seconds": 0,
-    "video_duration_seconds": 28.48
+    "video_duration_seconds": 28.48,
+    "reshoot_date": "2026-10-18",
+    "raw_reshoot_seconds": 28.36,
+    "video_timing_scale": 1
   },
   {
     "index": 2,
@@ -30,7 +33,10 @@
     "speech": "These are the tracked runs for the two candidate models. Each run records model parameters, tuned settings, accuracy, precision, recall, and ROC-AUC. The artifacts include grid-search results, an out-of-fold ROC curve, a confusion matrix, and the fitted model. This lets me inspect how a result was produced and compare experiments using the same evaluation setup.",
     "duration": 24.6324716553288,
     "video_start_seconds": 111.71178079200145,
-    "video_duration_seconds": 30.8
+    "video_duration_seconds": 30.8,
+    "reshoot_date": "2026-10-18",
+    "raw_reshoot_seconds": 30.2,
+    "video_timing_scale": 1
   },
   {
     "index": 5,
@@ -38,7 +44,10 @@
     "speech": "The packaged joblib file contains both preprocessing and the selected classifier. Training and serving dependencies are pinned, with a smaller requirements file for the serving image. The seven tests cover the dataset contract, preprocessing, missing-value handling, model inference, and API validation. Here are the local test and lint results. GitHub Actions repeats linting, data acquisition, training, tests, and a Docker build. A failing step fails the workflow, and the artifact step preserves available metrics and screenshots.",
     "duration": 36.011156462585035,
     "video_start_seconds": 142.51178079200145,
-    "video_duration_seconds": 41.12
+    "video_duration_seconds": 41.12,
+    "reshoot_date": "2026-10-18",
+    "raw_reshoot_seconds": 40.92,
+    "video_timing_scale": 1
   },
   {
     "index": 6,
@@ -70,6 +79,9 @@
     "speech": "The repository includes the download and training scripts, reusable pipeline, tests, CI workflow, deployment manifests, monitoring configuration, and report. This demonstration connects a reproducible experiment to a tested, containerised, locally deployed API with operational visibility. The main limitations are the small dataset, shared tuning and evaluation folds, and the absence of live ground-truth labels.",
     "duration": 29.77659863945578,
     "video_start_seconds": 298.7917807920014,
-    "video_duration_seconds": 34.8
+    "video_duration_seconds": 34.8,
+    "reshoot_date": "2026-10-18",
+    "raw_reshoot_seconds": 34.68,
+    "video_timing_scale": 1
   }
 ]
