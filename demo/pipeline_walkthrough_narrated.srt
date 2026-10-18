@@ -1,0 +1,282 @@
+1
+00:00:00,800 --> 00:00:06,093
+This assignment builds an end-to-end MLOps pipeline for
+predicting the presence of
+
+2
+00:00:06,093 --> 00:00:11,387
+heart disease from thirteen patient features. I use the
+UCI Heart Disease
+
+3
+00:00:11,387 --> 00:00:16,680
+dataset, compare two classifiers, track experiments with
+MLflow, and serve the selected
+
+4
+00:00:16,680 --> 00:00:21,973
+model through FastAPI. I will show the path from data
+and training
+
+5
+00:00:21,973 --> 00:00:25,061
+to automated checks, Docker, Kubernetes, and monitoring.
+
+6
+00:00:29,280 --> 00:00:34,578
+The downloaded dataset contains three hundred and three
+rows, thirteen input features,
+
+7
+00:00:34,578 --> 00:00:39,876
+and one binary target. There are one hundred and sixty-
+five positive cases
+
+8
+00:00:39,876 --> 00:00:45,174
+and one hundred and thirty-eight negative cases, so the
+imbalance is mild.
+
+9
+00:00:45,174 --> 00:00:50,472
+I checked missing values and duplicates and examined
+feature distributions and correlations.
+
+10
+00:00:50,472 --> 00:00:55,770
+Evaluation uses shuffled, stratified folds to preserve
+class proportions and avoid bias
+
+11
+00:00:55,770 --> 00:00:57,536
+from the dataset's ordering.
+
+12
+00:01:02,600 --> 00:01:08,057
+Preprocessing is part of the model pipeline. Numeric
+features receive median imputation
+
+13
+00:01:08,057 --> 00:01:13,515
+and standard scaling. Categorical features receive most-
+frequent imputation and one-hot encoding, with
+
+14
+00:01:13,515 --> 00:01:18,972
+unseen categories handled safely. Keeping preprocessing
+inside the pipeline fits it within
+
+15
+00:01:18,972 --> 00:01:24,429
+each training fold and reuses it at inference. I tune
+Logistic Regression
+
+16
+00:01:24,429 --> 00:01:29,886
+and Random Forest with five-fold stratified cross-
+validation. Random Forest is selected by
+
+17
+00:01:29,886 --> 00:01:35,344
+the highest mean ROC-AUC: about zero point nine one
+eight, compared with
+
+18
+00:01:35,344 --> 00:01:40,801
+zero point nine one seven for Logistic Regression. That
+margin is tiny,
+
+19
+00:01:40,801 --> 00:01:46,258
+and Logistic Regression has higher recall. Tuning and
+evaluation reuse the same
+
+20
+00:01:46,258 --> 00:01:49,441
+folds, so these estimates may be optimistic.
+
+21
+00:01:52,512 --> 00:01:57,886
+These are the tracked runs for the two candidate models.
+Each run
+
+22
+00:01:57,886 --> 00:02:03,260
+records model parameters, tuned settings, accuracy,
+precision, recall, and ROC-AUC. The artifacts
+
+23
+00:02:03,260 --> 00:02:08,635
+include grid-search results, an out-of-fold ROC curve, a
+confusion matrix, and the
+
+24
+00:02:08,635 --> 00:02:14,009
+fitted model. This lets me inspect how a result was
+produced and
+
+25
+00:02:14,009 --> 00:02:17,144
+compare experiments using the same evaluation setup.
+
+26
+00:02:23,312 --> 00:02:28,998
+The packaged joblib file contains both preprocessing and
+the selected classifier. Training
+
+27
+00:02:28,998 --> 00:02:34,684
+and serving dependencies are pinned, with a smaller
+requirements file for the
+
+28
+00:02:34,684 --> 00:02:40,370
+serving image. The seven tests cover the dataset
+contract, preprocessing, missing-value handling,
+
+29
+00:02:40,370 --> 00:02:46,056
+model inference, and API validation. Here are the local
+test and lint
+
+30
+00:02:46,056 --> 00:02:51,742
+results. GitHub Actions repeats linting, data
+acquisition, training, tests, and a Docker
+
+31
+00:02:51,742 --> 00:02:57,428
+build. A failing step fails the workflow, and the
+artifact step preserves
+
+32
+00:02:57,428 --> 00:02:59,323
+available metrics and screenshots.
+
+33
+00:03:04,432 --> 00:03:09,356
+The Docker image contains the saved pipeline and starts
+the FastAPI server.
+
+34
+00:03:09,356 --> 00:03:14,281
+This health request confirms the API is reachable. I now
+submit the
+
+35
+00:03:14,281 --> 00:03:19,205
+sample patient's thirteen features to the prediction
+endpoint. The saved model returns
+
+36
+00:03:19,205 --> 00:03:24,130
+class one, labelled disease, with a positive-class
+probability of zero point six
+
+37
+00:03:24,130 --> 00:03:29,054
+five two. The probability field always refers to the
+disease class. Input
+
+38
+00:03:29,054 --> 00:03:33,978
+validation rejects invalid or incomplete requests before
+they reach the model. This
+
+39
+00:03:33,978 --> 00:03:38,492
+is an educational model, rather than a tool for clinical
+decisions.
+
+40
+00:03:43,512 --> 00:03:48,473
+The same image is deployed to local Minikube using these
+manifests. The
+
+41
+00:03:48,473 --> 00:03:53,434
+deployment requests two replicas and defines resource
+limits, readiness checks, and liveness
+
+42
+00:03:53,434 --> 00:03:58,395
+checks. Here, both pods are ready, and the rollout has
+completed. The
+
+43
+00:03:58,395 --> 00:04:03,356
+service is configured as a LoadBalancer. On this local
+setup, I access
+
+44
+00:04:03,356 --> 00:04:08,318
+it through port-forwarding; a pending external IP does
+not prevent this demonstration.
+
+45
+00:04:08,318 --> 00:04:13,279
+This request goes through the Kubernetes service and
+returns a prediction from
+
+46
+00:04:13,279 --> 00:04:14,519
+the deployed model.
+
+47
+00:04:19,592 --> 00:04:25,307
+The monitoring stack runs the API, Prometheus, and
+Grafana. Prometheus scrapes the
+
+48
+00:04:25,307 --> 00:04:31,022
+API every fifteen seconds; this target is up. After
+sending prediction requests,
+
+49
+00:04:31,022 --> 00:04:36,738
+the Grafana dashboard displays prediction counts,
+request rates, latency, class distribution, and
+
+50
+00:04:36,738 --> 00:04:42,453
+process CPU usage. The request logs connect an input
+with its prediction
+
+51
+00:04:42,453 --> 00:04:48,169
+and probability. The disease-rate gauge can flag changes
+in predicted class mix,
+
+52
+00:04:48,169 --> 00:04:53,884
+but it cannot establish model accuracy or confirm drift
+without further evidence
+
+53
+00:04:53,884 --> 00:04:55,313
+and ground-truth labels.
+
+54
+00:04:59,592 --> 00:05:06,209
+The repository includes the download and training
+scripts, reusable pipeline, tests, CI
+
+55
+00:05:06,209 --> 00:05:12,826
+workflow, deployment manifests, monitoring
+configuration, and report. This demonstration connects a
+reproducible
+
+56
+00:05:12,826 --> 00:05:19,443
+experiment to a tested, containerised, locally deployed
+API with operational visibility. The
+
+57
+00:05:19,443 --> 00:05:26,060
+main limitations are the small dataset, shared tuning
+and evaluation folds, and
+
+58
+00:05:26,060 --> 00:05:29,368
+the absence of live ground-truth labels.

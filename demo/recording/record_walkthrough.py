@@ -13,6 +13,7 @@ BROWSER = "/Users/krithika/Library/Caches/ms-playwright/chromium-1234/chrome-mac
 CONSOLE = "http://127.0.0.1:8766"
 MLFLOW = "http://127.0.0.1:5001"
 GITHUB = "https://github.com/krxthx/2025ae05082-MLOps-Assignment-1"
+CI_RUN_TITLE = "Docs: point README and report at the narrated walkthrough"
 
 POINTER = """
 window.addEventListener('DOMContentLoaded',()=>{
@@ -31,6 +32,9 @@ SCENE_START = 0
 
 async def pause(page, seconds):
     await page.wait_for_timeout(seconds * 1000)
+    text = (await page.locator("body").inner_text()).lower()
+    if any(term in text for term in ("claude", "co-authored-by:", "noreply@anthropic.com")):
+        raise RuntimeError("Unexpected attribution or assistant label in the recording view")
 
 async def point(page, locator):
     await locator.scroll_into_view_if_needed()
@@ -66,8 +70,11 @@ async def source(page, name, hold=4):
     await pause(page, hold)
 
 async def scene1(page):
-    await page.goto(GITHUB)
+    await page.goto(GITHUB + "/commits/main/")
     await pause(page, 3)
+    await click(page, page.get_by_role("link", name=CI_RUN_TITLE, exact=True).first)
+    await pause(page, 3)
+    await page.goto(GITHUB + "/blob/main/README.md")
     await page.get_by_role("heading", name="Heart Disease MLOps — End-to-End (Assignment 1)").scroll_into_view_if_needed()
     await pause(page, 5)
     await page.mouse.wheel(0, 490)
@@ -116,7 +123,7 @@ async def scene5(page):
     await terminal(page, "python3 -m flake8 src tests --max-line-length=120 --extend-ignore=E203,W503", 2)
     await page.goto(GITHUB + "/actions")
     await pause(page, 3)
-    await click(page, page.get_by_role("link", name="Add PDF report, demo walkthrough video, CI evidence; finalize docs", exact=True))
+    await click(page, page.get_by_role("link", name=CI_RUN_TITLE, exact=True))
     await pause(page, 3)
     await click(page, page.get_by_role("link", name="build-test", exact=True).first)
     await pause(page, 6)
@@ -164,7 +171,7 @@ async def scene8(page):
     await terminal(page, "docker compose logs --tail=3 heart-api", 4)
 
 async def scene9(page):
-    await page.goto(GITHUB + "#report-and-video")
+    await page.goto(GITHUB + "/blob/main/README.md")
     await pause(page, 5)
     await page.get_by_role("heading", name="Kubernetes (Minikube)", exact=True).scroll_into_view_if_needed()
     await pause(page, 7)

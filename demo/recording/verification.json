@@ -1,0 +1,42 @@
+{
+  "video": "demo/pipeline_walkthrough_narrated.mp4",
+  "bytes": 15740019,
+  "sha256": "a412976857a8918b520a93e0ec980da2826bba825596f97c82165c133bb7b8a3",
+  "full_video_audio_decode": "passed",
+  "narration": "synthetic macOS Samantha",
+  "width": 1920,
+  "height": 1080,
+  "tests": "7 passed",
+  "lint": "passed",
+  "model_runs": [
+    {
+      "run_id": "abb6280f052b419bbd139a074daa72cb",
+      "model": "random_forest",
+      "status": "FINISHED",
+      "metrics": {
+        "grid_best_roc_auc": 0.9177970177970177,
+        "accuracy": 0.8417486338797815,
+        "precision": 0.8395380583995384,
+        "recall": 0.8848484848484848,
+        "roc_auc": 0.9177970177970177,
+        "fit_seconds": 5.542340278625488
+      },
+      "model_artifact_skipped": false
+    },
+    {
+      "run_id": "541cbf50009745b182516c4d56f5db70",
+      "model": "logistic_regression",
+      "status": "FINISHED",
+      "metrics": {
+        "grid_best_roc_auc": 0.9173721340388006,
+        "accuracy": 0.8647540983606558,
+        "precision": 0.8619742023144896,
+        "recall": 0.9090909090909092,
+        "roc_auc": 0.9173721340388006,
+        "fit_seconds": 5.06817889213562
+      },
+      "model_artifact_skipped": false
+    }
+  ],
+  "report_pages": 10
+}
