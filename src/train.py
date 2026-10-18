@@ -103,7 +103,11 @@ def main(data="data/heart.csv", out="models/heart_pipeline.joblib"):
             mlflow.log_metrics(metrics)
             pipe.fit(X, y)  # refit on full data for packaging
             try:
-                mlflow.sklearn.log_model(pipe, artifact_path=name)
+                mlflow.sklearn.log_model(
+                    pipe,
+                    artifact_path=name,
+                    serialization_format=mlflow.sklearn.SERIALIZATION_FORMAT_CLOUDPICKLE,
+                )
             except Exception as e:  # noqa: BLE001 - skops trust issue on some versions
                 print(f"[train] mlflow log_model skipped ({name}): {e}")
                 mlflow.log_param("model_artifact_skipped", name)
