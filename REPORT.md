@@ -188,9 +188,9 @@ step uses `if: always()`, so evidence is kept even on failure.
 
 ![](screenshots/github_actions_pass.jpg)
 
-*Figure — GitHub Actions run #4 on `main`: install, lint, download, train, tests and docker build all pass (1 m 40 s total).*
+*Figure — GitHub Actions run #2 on `main` (commit `e81a005`): install, lint, download, train, tests and docker build all pass (1 m 25 s total).*
 
-**What the first CI runs taught me.** The first two runs on GitHub failed, although everything passed on my laptop.
+**What the first CI runs taught me.** During development the first two GitHub runs failed, although everything passed on my laptop (the repository was later recreated with a clean history, so those failed runs are no longer listed under Actions).
 This is exactly what CI is for, and each failure was a genuine reproducibility bug:
 
 1. **Unpinned transitive dependency.** On a fresh install pip picked SQLAlchemy 2.1, which MLflow 2.20.1 cannot import
