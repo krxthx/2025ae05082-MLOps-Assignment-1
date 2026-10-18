@@ -7,8 +7,8 @@
     "video_start_seconds": 0,
     "video_duration_seconds": 28.48,
     "reshoot_date": "2026-10-18",
-    "raw_reshoot_seconds": 28.36,
-    "video_timing_scale": 1
+    "raw_reshoot_seconds": 29.88,
+    "video_timing_scale": 0.9531459170013388
   },
   {
     "index": 2,
@@ -46,7 +46,7 @@
     "video_start_seconds": 142.51178079200145,
     "video_duration_seconds": 41.12,
     "reshoot_date": "2026-10-18",
-    "raw_reshoot_seconds": 40.92,
+    "raw_reshoot_seconds": 41.0,
     "video_timing_scale": 1
   },
   {
@@ -80,8 +80,8 @@
     "duration": 29.77659863945578,
     "video_start_seconds": 298.7917807920014,
     "video_duration_seconds": 34.8,
-    "reshoot_date": "2026-10-18",
-    "raw_reshoot_seconds": 34.68,
+    "reshoot_date": "2026-10-19",
+    "raw_reshoot_seconds": 34.72,
     "video_timing_scale": 1
   }
 ]

@@ -1,8 +1,10 @@
 import hashlib
 import json
+from datetime import datetime
 from pathlib import Path
 import subprocess
 import sys
+from zoneinfo import ZoneInfo
 
 sys.path.insert(0, "/private/tmp/assignment-video-tools")
 import imageio_ffmpeg
@@ -36,7 +38,7 @@ def main():
                 "-c:v", "libx264", "-preset", "fast", "-crf", "18",
                 "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k", "-ar", "48000", str(clip),
             ], check=True)
-            scene["reshoot_date"] = "2026-10-18"
+            scene["reshoot_date"] = datetime.fromtimestamp(raw.stat().st_mtime, ZoneInfo("Asia/Kolkata")).date().isoformat()
             scene["raw_reshoot_seconds"] = raw_length
             scene["video_timing_scale"] = speed
         files.append(f"file '{clip}'")
@@ -46,7 +48,7 @@ def main():
     (WORK / "refresh_concat.txt").write_text("\n".join(files))
     (WORK / "refresh_chapters.ffmeta").write_text(
         ";FFMETADATA1\ntitle=Heart Disease MLOps - Live Pipeline Walkthrough\n"
-        "comment=Live browser footage; synthetic narration; repository and MLflow views refreshed 2026-10-18.\n"
+        "comment=Live browser footage; synthetic narration; repository and MLflow views refreshed against the verified GitHub snapshot.\n"
         + "\n".join(chapters)
     )
     candidate = WORK / "pipeline_walkthrough_refreshed.mp4"

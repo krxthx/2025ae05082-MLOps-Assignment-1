@@ -13,7 +13,8 @@ BROWSER = "/Users/krithika/Library/Caches/ms-playwright/chromium-1234/chrome-mac
 CONSOLE = "http://127.0.0.1:8766"
 MLFLOW = "http://127.0.0.1:5001"
 GITHUB = "https://github.com/krxthx/2025ae05082-MLOps-Assignment-1"
-CI_RUN_TITLE = "Docs: point README and report at the narrated walkthrough"
+CI_RUN_TITLE = ""
+CI_RUN_URL = ""
 
 POINTER = """
 window.addEventListener('DOMContentLoaded',()=>{
@@ -70,6 +71,8 @@ async def source(page, name, hold=4):
     await pause(page, hold)
 
 async def scene1(page):
+    await page.goto(GITHUB)
+    await pause(page, 2)
     await page.goto(GITHUB + "/commits/main/")
     await pause(page, 3)
     await click(page, page.get_by_role("link", name=CI_RUN_TITLE, exact=True).first)
@@ -123,7 +126,7 @@ async def scene5(page):
     await terminal(page, "python3 -m flake8 src tests --max-line-length=120 --extend-ignore=E203,W503", 2)
     await page.goto(GITHUB + "/actions")
     await pause(page, 3)
-    await click(page, page.get_by_role("link", name=CI_RUN_TITLE, exact=True))
+    await click(page, page.get_by_role("link", name=CI_RUN_TITLE, exact=True).first)
     await pause(page, 3)
     await click(page, page.get_by_role("link", name="build-test", exact=True).first)
     await pause(page, 6)
@@ -171,7 +174,7 @@ async def scene8(page):
     await terminal(page, "docker compose logs --tail=3 heart-api", 4)
 
 async def scene9(page):
-    await page.goto(GITHUB + "/blob/main/README.md")
+    await page.goto(GITHUB + "#report-and-video")
     await pause(page, 5)
     await page.get_by_role("heading", name="Kubernetes (Minikube)", exact=True).scroll_into_view_if_needed()
     await pause(page, 7)
@@ -179,7 +182,7 @@ async def scene9(page):
     await pause(page, 7)
 
 async def main():
-    global SCENE_START
+    global SCENE_START, CI_RUN_TITLE, CI_RUN_URL
     scenes = json.loads((WORK / "scenes.json").read_text())
     state = json.loads((WORK / "browser_state.json").read_text())
     ml = json.loads((WORK / "mlflow_state.json").read_text())
@@ -187,6 +190,22 @@ async def main():
     recordings = []
     selected = [int(x) for x in sys.argv[1:]] or range(1, 10)
     async with async_playwright() as p:
+        request = await p.request.new_context(base_url="https://api.github.com")
+        repo = "/repos/krxthx/2025ae05082-MLOps-Assignment-1"
+        commit_response = await request.get(repo + "/commits/main")
+        runs_response = await request.get(repo + "/actions/runs?per_page=30")
+        if not commit_response.ok or not runs_response.ok:
+            raise RuntimeError("Could not verify GitHub main and its workflow runs")
+        commit = await commit_response.json()
+        runs = (await runs_response.json())["workflow_runs"]
+        run = next((r for r in runs if r["head_sha"] == commit["sha"] and r["conclusion"] == "success"), None)
+        if run is None:
+            raise RuntimeError("No successful CI run exists for the current GitHub main")
+        CI_RUN_TITLE, CI_RUN_URL = run["display_title"], run["html_url"]
+        snapshot = {"commit": commit["sha"], "run_id": run["id"], "run_number": run["run_number"], "title": CI_RUN_TITLE, "url": CI_RUN_URL}
+        (WORK / "github_snapshot.json").write_text(json.dumps(snapshot, indent=2))
+        await request.dispose()
+        print(f"Verified GitHub snapshot: {commit['sha'][:7]}, CI #{run['run_number']}", flush=True)
         browser = await p.chromium.launch(executable_path=BROWSER, headless=True)
         for i in selected:
             scene = scenes[i - 1]
